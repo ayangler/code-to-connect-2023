@@ -1,3 +1,5 @@
+import java.time.LocalTime;
+
 public class Order {
     private final int quantity;
 
@@ -17,6 +19,8 @@ public class Order {
 
     private boolean isSOR;
 
+    private LocalTime timestamp;
+
     public Order(Long placedAtTimestamp, Double price, Integer quantity, boolean isBuy, String destination,
             String orderId) {
         id = idCounter;
@@ -29,6 +33,22 @@ public class Order {
         this.quantity = quantity;
         this.isBuy = isBuy;
         this.destination = destination;
+
+    }
+
+    public Order(Long placedAtTimestamp, Double price, Integer quantity, boolean isBuy, String destination,
+            String orderId, LocalTime timestamp) {
+        id = idCounter;
+        this.orderId = orderId;
+
+        idCounter++;
+
+        this.placedAtTimestamp = placedAtTimestamp;
+        this.price = price;
+        this.quantity = quantity;
+        this.isBuy = isBuy;
+        this.destination = destination;
+        this.timestamp = timestamp;
 
     }
 
@@ -86,6 +106,8 @@ public class Order {
         this.isSOR = isSOR;
     }
 
-
+    public LocalTime getTimestamp() {
+        return timestamp;
+    }
 
 }
