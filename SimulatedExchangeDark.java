@@ -56,21 +56,26 @@ public class SimulatedExchangeDark {
     // }
 
     public CompletableFuture<Void> updatePQ(Order order) {
-        if (order.getIsBuy() == true) {
-            buyOrders.add(order);
-        } else {
-            sellOrders.add(order);
-        }
-        return CompletableFuture.completedFuture(null);
+        CompletableFuture<Void> futureResult = CompletableFuture.runAsync(() -> {
+            System.out.println("is added");
+            if (order.getIsBuy()) {
+                buyOrders.add(order);
+            } else {
+                sellOrders.add(order);
+            }
+        });
+    
+        return futureResult;
     }
 
     public CompletableFuture<Void> cancelOrder(Order order) {
-        if (order.getIsBuy() == true) {
-            buyOrders.remove(order);
-        } else {
-            sellOrders.remove(order);
-        }
-        return CompletableFuture.completedFuture(null);
+        return CompletableFuture.runAsync(() -> {
+            if (order.getIsBuy() == true) {
+                buyOrders.remove(order);
+            } else {
+                sellOrders.remove(order);
+            }
+        });
     }
 
     public CompletableFuture<ArrayList<Order>> fulfillOrdersAsync() {
@@ -78,24 +83,23 @@ public class SimulatedExchangeDark {
             ArrayList<Order> ordersFulfilled = new ArrayList<Order>();
             Boolean orderCanBeFulfilled = true;
             while (orderCanBeFulfilled) {
-                Order firstBuyOrder = buyOrders.peek();
-                Order firstSellOrder = sellOrders.peek();
-    
+                Order firstBuyOrder = buyOrders.poll();
+                Order firstSellOrder = sellOrders.poll();
+                buyOrders.add(firstBuyOrder);
+                sellOrders.add(firstSellOrder);
                 // Buy price is higher than sell price
                 // Sell at buy price 
                 if (firstBuyOrder.getPrice() >= firstSellOrder.getPrice()) {
                     if (firstBuyOrder.getQuantity() >= firstSellOrder.getQuantity()) {
                         // sell order is fulfilled but buy order is not
                         Integer qty = firstBuyOrder.getQuantity() - firstSellOrder.getQuantity(); 
-                        sellOrders.poll();
-                        if (firstSellOrder.getIsSOR() == true) {
-                            ordersFulfilled.add(firstSellOrder);
-                        }
                         if (qty > 0) { //order is not fulfilled
                             Order newFirstBuyOrder = new Order(firstBuyOrder.getPlacedAtTimestamp(), firstBuyOrder.getPrice(), qty, true, firstBuyOrder.getDestination(), firstBuyOrder.getOrderId());
                             buyOrders.poll();
                             buyOrders.add(newFirstBuyOrder);
                         } else { // order is fulfilled. Check if SOR
+
+                            buyOrders.poll();
                             if (firstBuyOrder.getIsSOR() == true) {
                                 ordersFulfilled.add(firstBuyOrder);
                             }
@@ -103,15 +107,12 @@ public class SimulatedExchangeDark {
                     } else {
                         // buy order is fulfilled but sell order is not
                         Integer qty = firstSellOrder.getQuantity() - firstBuyOrder.getQuantity();
-                        buyOrders.poll();
-                        if (firstBuyOrder.getIsSOR() == true) {
-                            ordersFulfilled.add(firstSellOrder);
-                        }
                         if (qty > 0) { //order is not fulfilled
                             Order newFirstSellOrder = new Order(firstSellOrder.getPlacedAtTimestamp(), firstSellOrder.getPrice(), qty, false, firstSellOrder.getDestination(), firstSellOrder.getOrderId());
                             sellOrders.poll();
                             sellOrders.add(newFirstSellOrder);
                         } else { // order is fulfilled. Check if SOR
+                            sellOrders.poll();
                             if (firstBuyOrder.getIsSOR() == true) {
                                 ordersFulfilled.add(firstSellOrder);
                             }

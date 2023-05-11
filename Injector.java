@@ -1,7 +1,10 @@
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class Injector {
 
@@ -97,11 +100,21 @@ public class Injector {
                     // for the orderStr, convert it to an Order
                     Order order = mapToOrder(orderStr, timeStr);
                     System.out.println(order.toString());
-                }       
-                count++;
+                    if (order.getDestination().equals("L")) {
+                        CompletableFuture<Void> futureResult = simulatedExchangeLit.updatePQ(order);
+                    } else if (order.getDestination().equals("D")) {
+                        CompletableFuture<Void> futureResult = simulatedExchangeDark.updatePQ(order);
+                    } else { // order's destination is SOR
 
+                    }
+
+                }  
                 
-
+                 CompletableFuture<ArrayList<Order>> futureResult = simulatedExchangeLit.fulfillOrdersAsync();
+                 futureResult.thenAccept(ordersFulfilled -> {
+                    System.out.println("Fulfilled orders:" + ordersFulfilled.size());
+                });
+                count++;
                 
             }
 
