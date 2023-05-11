@@ -15,9 +15,8 @@ public class Order {
 
     private final String destination;
 
-   
-
-    public Order(Long placedAtTimestamp, Double price, Integer quantity, boolean isBuy, String destination, String orderId) {
+    public Order(Long placedAtTimestamp, Double price, Integer quantity, boolean isBuy, String destination,
+            String orderId) {
         id = idCounter;
         this.orderId = orderId;
 
@@ -28,7 +27,7 @@ public class Order {
         this.quantity = quantity;
         this.isBuy = isBuy;
         this.destination = destination;
-        
+
     }
 
     public Long getPlacedAtTimestamp() {
@@ -43,12 +42,11 @@ public class Order {
         return quantity;
     }
 
-
     public boolean getIsBuy() {
         return isBuy;
     }
 
-    public String getOrderId(){
+    public String getOrderId() {
         return orderId;
     }
 
@@ -57,7 +55,7 @@ public class Order {
 
     }
 
-    public String getDestination(){
+    public String getDestination() {
         return destination;
     }
 
@@ -74,8 +72,8 @@ public class Order {
 
     @Override
     public String toString() {
-        return String.format("%s@%s", quantity, price);
+        String side = isBuy ? "Buy" : "Sell";
+        return String.format("%d [%s][%s] %s %s@%s", placedAtTimestamp, orderId, destination, side, quantity, price);
     }
-
 
 }
