@@ -1,27 +1,24 @@
-import java.util.ArrayList;
 import java.util.List;
 
 public class SmartOrderRouter {
     private SimulatedExchangeLit s;
     private SimulatedExchangeDark d;
+    // private List<Order> filledBuyOrders;
+    // private List<Order> filledSellOrders;
     public SmartOrderRouter(SimulatedExchangeLit s, SimulatedExchangeDark d) {
         // double splitRatio = calculateSplitRatio(order.getPrice(), fillRate, getOrderBookLiquidity());
         this.s = s;
         this.d = d;
-        
-       
+
     }
-    // public void connectToLitExchange() {
-    //     // get the current data from the list exchange and update the properties in SmartOrderRouter
-    //     s.getBuyOrders();
-    //     s.getSellOrders();
-    // }
     public void routeOrder(Order order) {
+       
         // Determine whether to send the order to the dark pool or the lit exchange
         //If the desired order price is within the price range of the lit exchange order book, then send the order to the lit exchange
         // order quantity is more than the current 
         if (order.getPrice() > s.getSellOrders().peek().getPrice()) {
             if(order.getQuantity() < s.getSellOrders().peek().getQuantity()){
+                System.out.println("Route called");
                 sendLitOrder(order);
             } else {
                 // split the order
@@ -62,10 +59,10 @@ public class SmartOrderRouter {
     // }
 
     private void sendDarkOrder(Order order){
-        s.updatePQ(order);
+        d.updatePQ(order);
     }
     private void sendLitOrder(Order order){
-        d.updatePQ(order);
+        s.updatePQ(order);
     }
     public void updateOrders(Order order){
         routeOrder(order);
