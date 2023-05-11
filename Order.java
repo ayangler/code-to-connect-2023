@@ -9,18 +9,18 @@ public class Order {
 
     private final Double price;
 
-    private final boolean isBuyOrSell;
+    private final boolean isBuy;
 
     private final String destination;
 
-    public Order(Long placedAtTimestamp, Double price, Integer quantity, boolean buyOrSell, String destination) {
+    public Order(Long placedAtTimestamp, Double price, Integer quantity, boolean isBuy, String destination) {
         this.id = idCounter;
         idCounter++;
 
         this.placedAtTimestamp = placedAtTimestamp;
         this.price = price;
         this.quantity = quantity;
-        this.isBuyOrSell = buyOrSell;
+        this.isBuy = isBuy;
         this.destination = destination;
         
     }
@@ -37,8 +37,9 @@ public class Order {
         return quantity;
     }
 
-    public boolean getIsBuyOrSell() {
-        return isBuyOrSell;
+
+    public boolean getIsBuy() {
+        return isBuy;
     }
 
     public Long getId(){
