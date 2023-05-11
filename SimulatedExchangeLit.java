@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public class SimulatedExchangeLit {
 
@@ -52,72 +53,76 @@ public class SimulatedExchangeLit {
         return sellOrders;
     }
 
-    public void updatePQ(Order order) {
+    public CompletableFuture<Void> updatePQ(Order order) {
         if (order.getIsBuy() == true) {
             buyOrders.add(order);
         } else {
             sellOrders.add(order);
         }
+        return CompletableFuture.completedFuture(null);
     }
 
-    public void cancelOrder(Order order) {
+    public CompletableFuture<Void> cancelOrder(Order order) {
         if (order.getIsBuy() == true) {
             buyOrders.remove(order);
         } else {
             sellOrders.remove(order);
         }
+        return CompletableFuture.completedFuture(null);
     }
 
-    public ArrayList<Order> fulfillOrders() {
-        ArrayList<Order> ordersFulfilled = new ArrayList<Order>();
-        Boolean orderCanBeFulfilled = true;
-        while (orderCanBeFulfilled) {
-            Order firstBuyOrder = buyOrders.peek();
-            Order firstSellOrder = sellOrders.peek();
-
-            // Buy price is higher than sell price
-            // Sell at buy price 
-            if (firstBuyOrder.getPrice() >= firstSellOrder.getPrice()) {
-                if (firstBuyOrder.getQuantity() >= firstSellOrder.getQuantity()) {
-                    // sell order is fulfilled but buy order is not
-                    Integer qty = firstBuyOrder.getQuantity() - firstSellOrder.getQuantity(); 
-                    sellOrders.poll();
-                    if (firstSellOrder.getIsSOR() == true) {
-                        ordersFulfilled.add(firstSellOrder);
-                    }
-                    if (qty > 0) { //order is not fulfilled
-                        Order newFirstBuyOrder = new Order(firstBuyOrder.getPlacedAtTimestamp(), firstBuyOrder.getPrice(), qty, true, firstBuyOrder.getDestination(), firstBuyOrder.getOrderId());
-                        buyOrders.poll();
-                        buyOrders.add(newFirstBuyOrder);
-                    } else { // order is fulfilled. Check if SOR
-                        if (firstBuyOrder.getIsSOR() == true) {
-                            ordersFulfilled.add(firstBuyOrder);
-                        }
-                    }
-                } else {
-                    // buy order is fulfilled but sell order is not
-                    Integer qty = firstSellOrder.getQuantity() - firstBuyOrder.getQuantity();
-                    buyOrders.poll();
-                    if (firstBuyOrder.getIsSOR() == true) {
-                        ordersFulfilled.add(firstSellOrder);
-                    }
-                    if (qty > 0) { //order is not fulfilled
-                        Order newFirstSellOrder = new Order(firstSellOrder.getPlacedAtTimestamp(), firstSellOrder.getPrice(), qty, false, firstSellOrder.getDestination(), firstSellOrder.getOrderId());
+    public CompletableFuture<ArrayList<Order>> fulfillOrdersAsync() {
+        return CompletableFuture.supplyAsync(() -> {
+            ArrayList<Order> ordersFulfilled = new ArrayList<Order>();
+            Boolean orderCanBeFulfilled = true;
+            while (orderCanBeFulfilled) {
+                Order firstBuyOrder = buyOrders.peek();
+                Order firstSellOrder = sellOrders.peek();
+    
+                // Buy price is higher than sell price
+                // Sell at buy price 
+                if (firstBuyOrder.getPrice() >= firstSellOrder.getPrice()) {
+                    if (firstBuyOrder.getQuantity() >= firstSellOrder.getQuantity()) {
+                        // sell order is fulfilled but buy order is not
+                        Integer qty = firstBuyOrder.getQuantity() - firstSellOrder.getQuantity(); 
                         sellOrders.poll();
-                        sellOrders.add(newFirstSellOrder);
-                    } else { // order is fulfilled. Check if SOR
+                        if (firstSellOrder.getIsSOR() == true) {
+                            ordersFulfilled.add(firstSellOrder);
+                        }
+                        if (qty > 0) { //order is not fulfilled
+                            Order newFirstBuyOrder = new Order(firstBuyOrder.getPlacedAtTimestamp(), firstBuyOrder.getPrice(), qty, true, firstBuyOrder.getDestination(), firstBuyOrder.getOrderId());
+                            buyOrders.poll();
+                            buyOrders.add(newFirstBuyOrder);
+                        } else { // order is fulfilled. Check if SOR
+                            if (firstBuyOrder.getIsSOR() == true) {
+                                ordersFulfilled.add(firstBuyOrder);
+                            }
+                        }
+                    } else {
+                        // buy order is fulfilled but sell order is not
+                        Integer qty = firstSellOrder.getQuantity() - firstBuyOrder.getQuantity();
+                        buyOrders.poll();
                         if (firstBuyOrder.getIsSOR() == true) {
                             ordersFulfilled.add(firstSellOrder);
                         }
+                        if (qty > 0) { //order is not fulfilled
+                            Order newFirstSellOrder = new Order(firstSellOrder.getPlacedAtTimestamp(), firstSellOrder.getPrice(), qty, false, firstSellOrder.getDestination(), firstSellOrder.getOrderId());
+                            sellOrders.poll();
+                            sellOrders.add(newFirstSellOrder);
+                        } else { // order is fulfilled. Check if SOR
+                            if (firstBuyOrder.getIsSOR() == true) {
+                                ordersFulfilled.add(firstSellOrder);
+                            }
+                        }
                     }
+                } else {
+                    break;
                 }
-            } else {
-                break;
+    
             }
-
-        }
-
-        return ordersFulfilled;
+    
+            return ordersFulfilled;
+        });
     }
 
 }
