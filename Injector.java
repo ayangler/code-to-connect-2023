@@ -5,6 +5,19 @@ import java.util.Scanner;
 
 public class Injector {
 
+    SimulatedExchangeLit simulatedExchangeLit;
+
+    SimulatedExchangeDark simulatedExchangeDark;
+
+
+
+    public Injector(SimulatedExchangeLit simulatedExchangeLit, SimulatedExchangeDark simulatedExchangeDark) {
+
+        this.simulatedExchangeLit = simulatedExchangeLit;
+        this.simulatedExchangeDark = simulatedExchangeDark;
+
+    }
+
 
     public static long convertTimestamp(String timestamp) {
         // System.out.println(timestamp);
@@ -79,16 +92,17 @@ public class Injector {
                 String timeStr = tempArr[0];
 
                 // remaining are orders
-
                 for (int i = 1; i < tempArr.length; i++) {
                     String orderStr = tempArr[i];
                     // for the orderStr, convert it to an Order
                     Order order = mapToOrder(orderStr, timeStr);
                     System.out.println(order.toString());
-                }
-                
+                }       
                 count++;
-   
+
+                
+
+                
             }
 
             System.out.println("Total number of files read: " + count);
