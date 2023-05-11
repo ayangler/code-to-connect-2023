@@ -19,7 +19,7 @@ public class Injector {
     }
 
 
-    public static long convertTimestamp(String timestamp) {
+    public long convertTimestamp(String timestamp) {
         // System.out.println(timestamp);
         String[] components = timestamp.split(":");
         int hours = Integer.parseInt(components[0]);
@@ -33,7 +33,7 @@ public class Injector {
 
     }
 
-    private static Map<String, String> getOrderTags(String order) {
+    private Map<String, String> getOrderTags(String order) {
         Map<String, String> tagMap = new HashMap<>();
 
         String[] tags = order.split(";");
@@ -52,7 +52,7 @@ public class Injector {
         return tagMap;
     }
 
-    public static Order mapToOrder(String orderStr, String timeStr) {
+    public Order mapToOrder(String orderStr, String timeStr) {
         Map<String, String> tagMap = getOrderTags(orderStr);
         int quantity;
         String orderId;
@@ -72,7 +72,7 @@ public class Injector {
 
     }
 
-    public static void read() {
+    public void read() {
 
         // BufferedReader br = new BufferedReader(new
         // FileReader("testdata_orders_simpler_case"));
@@ -114,9 +114,9 @@ public class Injector {
 
     }
 
-    public static void main(String[] args) throws Exception {
-        read();
+    // public static void main(String[] args) throws Exception {
+    //     read();
 
-    }
+    // }
 }
 
