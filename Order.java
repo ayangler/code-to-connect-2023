@@ -5,6 +5,8 @@ public class Order {
 
     private final Long id;
 
+    private final String orderId;
+
     private final Long placedAtTimestamp;
 
     private final Double price;
@@ -13,8 +15,12 @@ public class Order {
 
     private final String destination;
 
-    public Order(Long placedAtTimestamp, Double price, Integer quantity, boolean isBuy, String destination) {
-        this.id = idCounter;
+   
+
+    public Order(Long placedAtTimestamp, Double price, Integer quantity, boolean isBuy, String destination, String orderId) {
+        id = idCounter;
+        this.orderId = orderId;
+
         idCounter++;
 
         this.placedAtTimestamp = placedAtTimestamp;
@@ -42,8 +48,13 @@ public class Order {
         return isBuy;
     }
 
-    public Long getId(){
+    public String getOrderId(){
+        return orderId;
+    }
+
+    public Long getId() {
         return id;
+
     }
 
     public String getDestination(){
