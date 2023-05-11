@@ -81,7 +81,7 @@ public class Injector {
         // FileReader("testdata_orders_simpler_case"));
 
         try {
-            File file = new File("testdata_orders_simpler_case.csv");
+            File file = new File("testdata_orders.csv");
             FileReader fr = new FileReader(file);
             BufferedReader br = new BufferedReader(fr);
             String line = "";
@@ -104,13 +104,12 @@ public class Injector {
                         CompletableFuture<Void> futureResult = simulatedExchangeLit.updatePQ(order);
                     } else if (order.getDestination().equals("D")) {
                         CompletableFuture<Void> futureResult = simulatedExchangeDark.updatePQ(order);
-                    } else { // order's destination is SOR
-
-                    }
+                    } 
 
                 }  
                 
                  CompletableFuture<ArrayList<Order>> futureResult = simulatedExchangeLit.fulfillOrdersAsync();
+                 CompletableFuture<ArrayList<Order>> futureResultDark = simulatedExchangeDark.fulfillOrdersAsync();
                  futureResult.thenAccept(ordersFulfilled -> {
                     System.out.println("Fulfilled orders:" + ordersFulfilled.size());
                 });

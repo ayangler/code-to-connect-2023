@@ -57,7 +57,6 @@ public class SimulatedExchangeDark {
 
     public CompletableFuture<Void> updatePQ(Order order) {
         CompletableFuture<Void> futureResult = CompletableFuture.runAsync(() -> {
-            System.out.println("is added");
             if (order.getIsBuy()) {
                 buyOrders.add(order);
             } else {
@@ -99,9 +98,11 @@ public class SimulatedExchangeDark {
                             buyOrders.add(newFirstBuyOrder);
                         } else { // order is fulfilled. Check if SOR
 
-                            buyOrders.poll();
+                            buyOrders.poll(); 
+                            // System.out.println("Fulfilled order");
                             if (firstBuyOrder.getIsSOR() == true) {
                                 ordersFulfilled.add(firstBuyOrder);
+                                System.out.println("[" + firstBuyOrder.getOrderId() + "]" + "[Dark] Buy" + firstBuyOrder.getQuantity() + "@" + firstBuyOrder.getPrice());
                             }
                         }
                     } else {
@@ -113,8 +114,11 @@ public class SimulatedExchangeDark {
                             sellOrders.add(newFirstSellOrder);
                         } else { // order is fulfilled. Check if SOR
                             sellOrders.poll();
+                            // System.out.println("Fulfilled order");
+                            Order newFirstSellOrder = new Order(firstSellOrder.getPlacedAtTimestamp(), firstBuyOrder.getPrice(), qty, false, firstSellOrder.getDestination(), firstSellOrder.getOrderId());
                             if (firstBuyOrder.getIsSOR() == true) {
-                                ordersFulfilled.add(firstSellOrder);
+                                ordersFulfilled.add(newFirstSellOrder);
+                                System.out.println("[" + newFirstSellOrder.getOrderId() + "]" + "[Dark] Sell" + newFirstSellOrder.getQuantity() + "@" + newFirstSellOrder.getPrice());
                             }
                         }
                     }
@@ -129,3 +133,5 @@ public class SimulatedExchangeDark {
     }
 
 }
+
+
