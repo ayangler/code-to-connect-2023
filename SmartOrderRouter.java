@@ -2,13 +2,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SmartOrderRouter {
-    private List<Order> fulfilledSellOrders;
-    private List<Order> fulfilledBuyOrders;
     private SimulatedExchangeLit s;
     private SimulatedExchangeDark d;
-    public SmartOrderRouter(Order order,SimulatedExchangeLit s, SimulatedExchangeDark d) {
-        fulfilledSellOrders = new ArrayList<Order>();
-        fulfilledBuyOrders = new ArrayList<Order>();
+    public SmartOrderRouter(SimulatedExchangeLit s, SimulatedExchangeDark d) {
         // double splitRatio = calculateSplitRatio(order.getPrice(), fillRate, getOrderBookLiquidity());
         this.s = s;
         this.d = d;
@@ -42,7 +38,7 @@ public class SmartOrderRouter {
                 } 
             }
             sendDarkOrder(order);
-        } else if (order.getPrice() < fulfilledSellOrders.get(0).getPrice()) {
+        } else if (order.getPrice() < s.getSellOrders().peek().getPrice()) {
             sendDarkOrder(order);
         } else {
             sendLitOrder(order);
@@ -70,6 +66,9 @@ public class SmartOrderRouter {
     }
     private void sendLitOrder(Order order){
         d.updatePQ(order);
+    }
+    public void updateOrders(Order order){
+        routeOrder(order);
     }
 
 }
