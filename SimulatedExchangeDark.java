@@ -7,9 +7,9 @@ public class SimulatedExchangeDark {
         public int compare(Order order1, Order order2) {
             // Ascending order
             if (order1.getPrice() < order2.getPrice()) {
-                return 1;
-            } else if (order1.getPrice() > order2.getPrice()) {
                 return -1;
+            } else if (order1.getPrice() > order2.getPrice()) {
+                return 1;
             } else {
                 return order1.getPlacedAtTimestamp().compareTo(order2.getPlacedAtTimestamp());
             }
