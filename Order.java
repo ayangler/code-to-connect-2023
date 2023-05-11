@@ -15,6 +15,8 @@ public class Order {
 
     private final String destination;
 
+    private boolean isSOR;
+
     public Order(Long placedAtTimestamp, Double price, Integer quantity, boolean isBuy, String destination,
             String orderId) {
         id = idCounter;
@@ -75,5 +77,15 @@ public class Order {
         String side = isBuy ? "Buy" : "Sell";
         return String.format("%d [%s][%s] %s %s@%s", placedAtTimestamp, orderId, destination, side, quantity, price);
     }
+
+    public boolean getIsSOR() {
+        return isSOR;
+    }
+
+    public void setIsSOR(boolean isSOR) {
+        this.isSOR = isSOR;
+    }
+
+
 
 }
